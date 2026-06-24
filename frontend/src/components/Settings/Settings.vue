@@ -63,6 +63,8 @@ import PreferencesSettings from '@/components/Settings/PreferencesSettings.vue'
 import WhatsAppSettings from '@/components/Settings/WhatsAppSettings.vue'
 import ERPNextSettings from '@/components/Settings/ERPNextSettings.vue'
 import LeadSyncSourcePage from '@/components/Settings/LeadSyncing/LeadSyncSourcePage.vue'
+import WebsiteIntegrationSettings from '@/components/Settings/WebsiteIntegrationSettings.vue'
+import APILeadSourcePage from '@/components/Settings/APILeadSource/APILeadSourcePage.vue'
 import DefaultsSettings from '@/components/Settings/DefaultsSettings.vue'
 import BrandSettings from '@/components/Settings/BrandSettings.vue'
 import HomeActions from '@/components/Settings/HomeActions.vue'
@@ -79,6 +81,7 @@ import {
   disableSettingModalOutsideClick,
 } from '@/composables/settings'
 import { isWhatsappInstalled } from '@/composables/whatsapp'
+import { isWebsiteIntegrationInstalled, isAPILeadSourceInstalled } from '@/composables/website_integration'
 import { Dialog, Avatar } from 'frappe-ui'
 import { ref, markRaw, computed, watch, h } from 'vue'
 import AssignmentRulePage from './AssignmentRules/AssignmentRulePage.vue'
@@ -229,6 +232,18 @@ const tabs = computed(() => {
           icon: 'refresh-cw',
           component: markRaw(LeadSyncSourcePage),
           condition: () => isManager(),
+        },
+        {
+          label: __('Website Integration'),
+          icon: 'globe',
+          component: markRaw(WebsiteIntegrationSettings),
+          condition: () => isWebsiteIntegrationInstalled.value && isManager(),
+        },
+        {
+          label: __('API Lead Source'),
+          icon: 'database',
+          component: markRaw(APILeadSourcePage),
+          condition: () => isAPILeadSourceInstalled.value && isManager(),
         },
       ],
     },

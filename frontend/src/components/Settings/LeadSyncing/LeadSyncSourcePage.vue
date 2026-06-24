@@ -31,7 +31,7 @@ const sources = createListResource({
   type: 'list',
   doctype: 'Lead Sync Source',
   cache: 'lead_sync_sources',
-  fields: ['name', 'enabled', 'type', 'last_synced_at', 'facebook_lead_form'],
+  fields: ['name', 'enabled', 'type', 'last_synced_at', 'facebook_lead_form', 'indiamart_api_key'],
   auto: true,
   orderBy: 'modified desc',
   pageLength: 20,

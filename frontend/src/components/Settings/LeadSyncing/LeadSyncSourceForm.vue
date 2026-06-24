@@ -84,16 +84,35 @@
             />
 
             <FormControl
+              v-if="syncSource.type?.value === 'Facebook'"
               v-model="syncSource.access_token"
               type="password"
               required="true"
               :label="__('Access Token')"
-              :placeholder="__('Enter Access Token')"
+              :placeholder="__('Enter Facebook Access Token')"
             >
               <template #suffix>
                 <a
                   target="_blank"
                   href="https://developers.facebook.com/docs/facebook-login/guides/access-tokens/"
+                >
+                  <LucideCircleQuestionMark class="w-4" />
+                </a>
+              </template>
+            </FormControl>
+
+            <FormControl
+              v-if="syncSource.type?.value === 'IndiaMART'"
+              v-model="syncSource.indiamart_api_key"
+              type="password"
+              required="true"
+              :label="__('API Key (glusr_crm_key)')"
+              :placeholder="__('Enter IndiaMART Pull API Key')"
+            >
+              <template #suffix>
+                <a
+                  target="_blank"
+                  href="https://seller.indiamart.com/leadmanager/crmapi"
                 >
                   <LucideCircleQuestionMark class="w-4" />
                 </a>
@@ -109,14 +128,14 @@
             />
 
             <Link
-              v-if="!isLocal"
+              v-if="!isLocal && syncSource.type?.value === 'Facebook'"
               v-model="syncSource.facebook_page"
               label="Facebook Page"
               doctype="Facebook Page"
             />
 
             <Link
-              v-if="!isLocal && syncSource.facebook_page"
+              v-if="!isLocal && syncSource.type?.value === 'Facebook' && syncSource.facebook_page"
               v-model="syncSource.facebook_lead_form"
               label="Lead Form"
               doctype="Facebook Lead Form"
@@ -244,6 +263,7 @@ const syncSource = ref({
   name: '',
   type: '',
   access_token: '',
+  indiamart_api_key: '',
   facebook_page: '',
   facebook_lead_form: '',
   enabled: true,
@@ -265,7 +285,9 @@ function updateSource(data) {
           docResource.value.document.reload()
         }
 
-        mappingFormDocResource.value.document.save.submit()
+        if (mappingFormDocResource.value) {
+          mappingFormDocResource.value.document.save.submit()
+        }
       },
       onError(e) {
         toast.error(e.messages[0] || __('Error updating Lead Sync Source'))
@@ -275,12 +297,20 @@ function updateSource(data) {
 }
 
 function createSource() {
-  sources.insert.submit(
-    {
-      ...syncSource.value,
-      type: syncSource.value.type.value,
-    },
-    {
+  const data = {
+    ...syncSource.value,
+    type: syncSource.value.type.value,
+  }
+
+  if (data.type === 'Facebook') {
+    delete data.indiamart_api_key
+  } else if (data.type === 'IndiaMART') {
+    delete data.access_token
+    delete data.facebook_page
+    delete data.facebook_lead_form
+  }
+
+  sources.insert.submit(data, {
       onSuccess: (newDoc) => {
         toast.success(__('Lead Sync Source created successfully'))
         isLocal.value = false
@@ -294,13 +324,32 @@ function createSource() {
 }
 
 function createOrUpdateSource() {
+  const data = {
+    ...syncSource.value,
+    type: syncSource.value.type.value,
+  }
+
+  if (data.type === 'IndiaMART') {
+    delete data.access_token
+    delete data.facebook_page
+    delete data.facebook_lead_form
+  } else if (data.type === 'Facebook') {
+    delete data.indiamart_api_key
+  }
+
   if (isLocal.value) {
-    createSource()
-  } else {
-    updateSource({
-      ...syncSource.value,
-      type: syncSource.value.type.value,
+    sources.insert.submit(data, {
+      onSuccess: (newDoc) => {
+        toast.success(__('Lead Sync Source created successfully'))
+        isLocal.value = false
+        docResource.value = getSourceDocResource(newDoc.name)
+      },
+      onError(error) {
+        toast.error(error.messages[0] || __('Error creating Lead Sync Source'))
+      },
     })
+  } else {
+    updateSource(data)
   }
 }
 

@@ -1,4 +1,5 @@
 import LogoFacebook from '@/components/Icons/FacebookIcon.vue'
+import LogoIndiaMART from '@/components/Icons/IndiaMARTIcon.vue'
 
 export const supportedSourceTypes = [
   {
@@ -11,10 +12,21 @@ export const supportedSourceTypes = [
     link: 'https://www.facebook.com/business/help/503306463479099?id=2190812977867143',
     custom: false,
   },
+  {
+    label: 'IndiaMART',
+    value: 'IndiaMART',
+    icon: LogoIndiaMART,
+    info: __(
+      'You will need an IndiaMART Pull API key (glusr_crm_key) to sync leads. Generate it at seller.indiamart.com/leadmanager/crmapi',
+    ),
+    link: 'https://seller.indiamart.com/leadmanager/crmapi',
+    custom: false,
+  },
 ]
 
 export const sourceIcon = {
   Facebook: LogoFacebook,
+  IndiaMART: LogoIndiaMART,
 }
 
 export const fbSourceFields = [
