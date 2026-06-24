@@ -43,6 +43,15 @@
       </template>
 
       <template #footer="{ value: v, close }">
+        <div v-if="attrs.onEdit && value">
+          <Button
+            variant="ghost"
+            class="w-full !justify-start"
+            :label="__('Edit')"
+            iconLeft="pencil"
+            @click="() => attrs.onEdit(value, close)"
+          />
+        </div>
         <div v-if="attrs.onCreate">
           <Button
             variant="ghost"

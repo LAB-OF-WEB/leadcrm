@@ -385,3 +385,35 @@ def add_roles():
 			update_permission_property(doctype, role, 0, "print", 1)
 			update_permission_property(doctype, role, 0, "report", 1)
 			update_permission_property(doctype, role, 0, "export", 1)
+
+
+@frappe.whitelist()
+def delete_whatsapp_account(account_name: str):
+	"""Delete a WhatsApp Account, clearing any default references first."""
+	if not frappe.db.exists("WhatsApp Account", account_name):
+		frappe.throw(_("WhatsApp Account {0} does not exist.").format(account_name),
+			frappe.DoesNotExistError)
+
+	# Check permissions
+	if not frappe.has_doc_permission("WhatsApp Account", "delete"):
+		frappe.throw(_("Not permitted to delete WhatsApp Account."), frappe.PermissionError)
+
+	# Clear default references in WhatsApp Settings if needed
+	if frappe.db.exists("DocType", "WhatsApp Settings"):
+		default_incoming = frappe.get_cached_value(
+			"WhatsApp Settings", "WhatsApp Settings", "default_incoming_account"
+		)
+		default_outgoing = frappe.get_cached_value(
+			"WhatsApp Settings", "WhatsApp Settings", "default_outgoing_account"
+		)
+
+		if default_incoming == account_name:
+			frappe.client.set_value(
+				"WhatsApp Settings", "WhatsApp Settings", "default_incoming_account", ""
+			)
+		if default_outgoing == account_name:
+			frappe.client.set_value(
+				"WhatsApp Settings", "WhatsApp Settings", "default_outgoing_account", ""
+			)
+
+	frappe.delete_doc("WhatsApp Account", account_name)

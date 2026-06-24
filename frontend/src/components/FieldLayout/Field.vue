@@ -102,6 +102,7 @@
         :filters="field.filters"
         :placeholder="getPlaceholder(field)"
         :onCreate="field.create"
+        :onEdit="field.edit"
         @change="(v) => fieldChange(v, field)"
       />
       <Button
