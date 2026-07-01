@@ -42,16 +42,19 @@
         </slot>
       </template>
 
-      <template #footer="{ value: v, close }">
-        <div v-if="attrs.onEdit && value">
+      <template #item-action="{ option, close }">
+        <div v-if="attrs.onEdit" class="shrink-0">
           <Button
             variant="ghost"
-            class="w-full !justify-start"
+            class="!px-1.5 !py-1"
             :label="__('Edit')"
             iconLeft="pencil"
-            @click="() => attrs.onEdit(value, close)"
+            @click.stop="() => attrs.onEdit(option.value, close)"
           />
         </div>
+      </template>
+
+      <template #footer="{ value: v, close }">
         <div v-if="attrs.onCreate">
           <Button
             variant="ghost"

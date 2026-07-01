@@ -110,6 +110,11 @@
                         {{ option.label }}
                       </div>
                     </slot>
+                    <slot
+                      v-if="slots['item-action']"
+                      name="item-action"
+                      v-bind="{ active, selected, option, close }"
+                    />
                   </li>
                 </ComboboxOption>
               </div>

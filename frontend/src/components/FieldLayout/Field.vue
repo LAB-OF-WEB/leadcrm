@@ -105,13 +105,6 @@
         :onEdit="field.edit"
         @change="(v) => fieldChange(v, field)"
       />
-      <Button
-        v-if="data[field.fieldname] && field.edit"
-        class="shrink-0"
-        :label="__('Edit')"
-        :iconLeft="EditIcon"
-        @click="field.edit(data[field.fieldname])"
-      />
     </div>
 
     <TableMultiselectInput
@@ -307,7 +300,6 @@ import ButtonControl, {
   getButtonTheme,
   getButtonVariant,
 } from '@/components/Controls/ButtonControl.vue'
-import EditIcon from '@/components/Icons/EditIcon.vue'
 import IndicatorIcon from '@/components/Icons/IndicatorIcon.vue'
 import UserAvatar from '@/components/UserAvatar.vue'
 import TableMultiselectInput from '@/components/Controls/TableMultiselectInput.vue'
